@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Grocery Inventory Manager</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="login" class="login-wrap">
+  <div class="card login-card">
+    <h1>🛒 Smart Grocery Inventory Manager</h1>
+    <p class="muted">Sign in to continue</p>
+    <input id="lu" placeholder="Username" autocomplete="username">
+    <input id="lp" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="lbtn" class="btn">Login</button>
+    <p id="lerr" class="err"></p>
+    <p class="muted small">Demo: admin / admin123 (owner) &middot; staff / staff123</p>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header>
+    <h1>🛒 Smart Grocery Inventory Manager</h1>
+    <nav>
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="products">Products</button>
+      <button data-tab="stock">Stock &amp; Sales</button>
+      <button data-tab="alerts">Alerts <span id="alertBadge" class="badge" hidden></span></button>
+      <button data-tab="reports">Reports</button>
+    </nav>
+    <div class="who"><span id="whoami"></span> <button id="logout" class="btn small ghost">Logout</button></div>
+  </header>
+
+  <main>
+    <section id="tab-dashboard">
+      <div class="stats" id="stats"></div>
+      <div class="grid2">
+        <div class="card"><h3>Sales revenue, last 14 days (₹)</h3><canvas id="salesChart" height="220"></canvas></div>
+        <div class="card"><h3>Stock value by category (₹)</h3><canvas id="catChart" height="220"></canvas></div>
+      </div>
+      <div class="card"><h3>Active alerts</h3><div id="dashAlerts"></div></div>
+    </section>
+
+    <section id="tab-products" hidden>
+      <div class="card">
+        <div class="toolbar">
+          <input id="search" placeholder="Search name or SKU...">
+          <select id="catFilter"><option value="">All categories</option></select>
+          <button id="addProdBtn" class="btn">+ Add product</button>
+        </div>
+        <div class="table-wrap"><table id="prodTable"></table></div>
+      </div>
+    </section>
+
+    <section id="tab-stock" hidden>
+      <div class="grid2">
+        <div class="card">
+          <h3>Record a transaction</h3>
+          <label>Product</label><select id="tProduct"></select>
+          <label>Type</label>
+          <select id="tType">
+            <option value="sale">Sale (reduces stock)</option>
+            <option value="purchase">Purchase / restock (adds stock)</option>
+            <option value="return">Customer return (adds stock)</option>
+            <option value="adjustment">Manual adjustment (+/-)</option>
+          </select>
+          <label>Quantity</label><input id="tQty" type="number" value="1">
+          <div id="expRow" hidden><label>New batch expiry date (optional)</label><input id="tExp" type="date"></div>
+          <label>Note</label><input id="tNote" placeholder="optional">
+          <button id="tBtn" class="btn">Submit</button>
+          <p id="tMsg"></p>
+        </div>
+        <div class="card"><h3>Recent transactions</h3><div class="table-wrap"><table id="txnTable"></table></div></div>
+      </div>
+    </section>
+
+    <section id="tab-alerts" hidden>
+      <div class="card"><h3>Active alerts</h3><div id="alertList"></div></div>
+    </section>
+
+    <section id="tab-reports" hidden>
+      <div class="card">
+        <h3>Export reports (CSV)</h3>
+        <a class="btn" href="/api/export/inventory">Inventory</a>
+        <a class="btn" href="/api/export/transactions">Transactions</a>
+        <a class="btn" href="/api/export/reorder">Reorder list</a>
+      </div>
+      <div class="card"><h3>Replenishment suggestions</h3>
+        <p class="muted small" id="modelNote"></p><div class="table-wrap"><table id="reorderTable"></table></div></div>
+      <div class="grid2">
+        <div class="card"><h3>🚀 Fast-moving products</h3><div class="table-wrap"><table id="fastTable"></table></div></div>
+        <div class="card"><h3>🐢 Slow-moving products</h3><div class="table-wrap"><table id="slowTable"></table></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="card modal-card">
+    <h3 id="mTitle">Add product</h3>
+    <div class="form-grid">
+      <div><label>SKU</label><input id="fSku"></div>
+      <div><label>Name</label><input id="fName"></div>
+      <div><label>Category</label><input id="fCat" list="catList"><datalist id="catList"></datalist></div>
+      <div><label>Price (₹)</label><input id="fPrice" type="number" step="0.01" min="0"></div>
+      <div><label>Quantity</label><input id="fQty" type="number" min="0"></div>
+      <div><label>Reorder level</label><input id="fRe" type="number" min="0" value="10"></div>
+      <div><label>Expiry date</label><input id="fExp" type="date"></div>
+      <div><label>Supplier</label><select id="fSup"></select></div>
+    </div>
+    <p id="mErr" class="err"></p>
+    <div class="actions"><button id="mSave" class="btn">Save</button><button id="mCancel" class="btn ghost">Cancel</button></div>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
